@@ -25,9 +25,6 @@ if (buttonStatus.length > 0) {
         });
     })
 }
-
-// End
-
 // Form search
 const formSearch = document.querySelector("#form-search");
 if (formSearch) {
@@ -46,8 +43,6 @@ if (formSearch) {
         window.location.href = url.href;
     });
 }
-//end
-
 // End form search
 const buttonsPagination = document.querySelectorAll("[button-pagination]")
 console.log(buttonsPagination);
@@ -103,7 +98,7 @@ if (checkboxMulti) {
 
 //Form Change Multi
 const formChangeMulti = document.querySelector("[form-change-multi]");
-console.log(formChangeMulti);
+// console.log(formChangeMulti);
 if (formChangeMulti) {
     formChangeMulti.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -175,8 +170,6 @@ if (showAlert) {
 }
 //end
 
-
-
 //Upload image
 const uploadImage = document.querySelector("[upload-image]");
 if (uploadImage) {
@@ -189,7 +182,6 @@ if (uploadImage) {
         const file = e.target.files[0];
         if (file) {
             uploadImagePreview.src = URL.createObjectURL(file);
-
         }
     });
     // Khi ấn nút X, xóa ảnh đã chọn
@@ -200,5 +192,45 @@ if (uploadImage) {
         // alert("Xoa thanh cong")
     });
 }
+//end
 
+//sort sắp xếp
+const sort = document.querySelector("[sort]");
+if (sort) {
+    let url = new URL(window.location.href);
+    const sortSelect = sort.querySelector("[sort-select]");
+    const sortClear = sort.querySelector("[sort-clear]");
+
+    sortSelect.addEventListener("change", (e) => {
+        const value = e.target.value;
+        const [sortKey, sortValue] = value.split("-");
+        // console.log(value.split("-"));
+        // console.log(sortKey);
+        // console.log(sortValue);
+
+        url.searchParams.set("sortKey", sortKey);
+        url.searchParams.set("sortValue", sortValue);
+
+        window.location.href = url.href;
+    });
+    // Xóa sắp xếp
+    sortClear.addEventListener("click", () => {
+        url.searchParams.delete("sortKey");
+        url.searchParams.delete("sortValue");
+
+        window.location.href = url.href;
+    });
+    // them selected=true cho option 
+    const sortKey = url.searchParams.get("sortKey");
+    const sortValue = url.searchParams.get("sortValue");
+    // console.log(sortKey);
+    // console.log(sortValue);
+    if (sortKey && sortValue) {
+        const stringSort = `${sortKey}-${sortValue}`;
+        console.log(stringSort);
+        const optionSelected = sortSelect.querySelector(`option[value='${stringSort}']`);
+        console.log(optionSelected);
+        optionSelected.selected = true;
+    }
+}
 //end

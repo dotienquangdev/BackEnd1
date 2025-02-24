@@ -1,47 +1,16 @@
 extends ../../layouts/default.pug
-include ../../mixins/filter-status.pug
-include ../../mixins/search.pug
-include ../../mixins/pagination.pug
-include ../../mixins/form-change-multi.pug
-include ../../mixins/alert.pug
-include ../../mixins/sort.pug
-block main 
-    +alert-success(5000)
-    +alert-error(5000)
-    .menuSplit 
-        h1 Trang danh sách sản phẩm
-        //- include /pages/products/deleteProducts/deleteProduct.pug
-            //- block main 
+block main  
     .card.mb-3 
-        .card-header Bộ lọc và Tìm kiếm
-        .card-body
-            .row
-                .col-6
-                    //- tách ra dạng mixin ở trang filter-status
-                    +filter-status(filterStatus)
-                
-                .col-6 
-                    //- tách ra dạng mixin ở trang search
-                    +search(keyword)
-    .card.mb-3 
-        .card-header Sắp xếp
-        .card-body 
-            .row 
-                .col-4 
-                    +sort()
-    .card.mb-3 
-        .card-header Danh sách sản phẩms
-        //- import form-change-multi.pug   tối giản code
+        .card-header Danh sách
         .card-body
             .row 
                 .col-8 
-                    +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)   
-                .col-4 
-                    a(
-                        href=`${prefixAdmin}/products/create`
-                        class="btn btn-outline-success"
-                    ) + Thêm mới
-                //- table.table.table-hover.table-sm 
+                    .col-4 
+                        a(
+                            href=`${prefixAdmin}/products-category/create`
+                            class="btn btn-outline-success"
+                        ) + Thêm mới
+
             table(
                 class="table table-hover table-sm"
                 checkbox-multi
@@ -52,14 +21,13 @@ block main
                             input(type="checkbox" name="checkall")
                         th STT 
                         th Hình ảnh
-                        th Tiêu đề
-                        th Giá
+                        th Tiêu đề 
                         th Vị trí 
                         th Trạng thái
                         th Hành động
 
                 tbody 
-                    each item, index in products
+                    each item, index in records
                         tr
                             td 
                                 input(
@@ -72,16 +40,15 @@ block main
                                 img(
                                     src=item.thumbnail
                                     alt=item.title
-                                    width="80px"
+                                    width="100px"
                                     height="auto"
                                 )
-                            td #{item.title}
-                            td #{item.price} $
+                            td #{item.title} 
                             td
                                 input(
                                     type="number"
                                     value=item.position
-                                    style="width:60px"
+                                    style="width: 60px"
                                     min="1"
                                     name="position"
                                 )
@@ -115,29 +82,17 @@ block main
                                     button-delete
                                     data-id=item.id
                                 ) xóa
-
-    //- Phâm trang
-    +pagination(pagination)
-
-    //- html chỉ có 2 phương thức là GET và POST muốn dùng được các cái khác thì phải
-    //- npm i method-override
-
-    form(
-        action=""
-        method="POST" 
-        id="form-change-status"
-        data-path=`${prefixAdmin}/products/change-status`
-    )
-
-    form(
-        action=""
-        method="POST" 
-        id="form-dalete-item"
-        data-path=`${prefixAdmin}/products/delete`
-    )
-    script(src="/admin/js/product.js") 
-
-
-    //- 1h17p
-                             
                         
+//- script(src="/admin/js/product.js")  
+//- _id
+//- title
+//- parent_id
+//- description 
+//- thumbnail
+//- status 
+//- position 
+//- deleted 
+//- deletedAt 
+//- createdAt 
+//- updatedAt
+//- slug 

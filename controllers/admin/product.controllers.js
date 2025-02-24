@@ -3,7 +3,6 @@ const systemConfig = require("../../config/system");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 const paginationHelper = require("../../helpers/pagination");
-
 // [GET] /admin/products hiển thị danh sách
 module.exports.index = async (req, res) => {
     // console.log(req.query.status);
@@ -39,15 +38,23 @@ module.exports.index = async (req, res) => {
         countProducts
     );
 
+    //Sort sắp xếp theop các tiêu chí giá ., tênchuwx cái ...
+    let sort = {};
+    if (req.query.sortKey && req.query.sortValue) {
+        sort[req.query.sortKey] = req.query.sortValue;
+    } else {
+        sort.position = "desc"
+    }
+    //end
+
     // console.log(objectPagination.skip);
     const products = await Product.find(find)
-        .sort({ position: "desc" }) // hàm này để sắp xép vị trí position "desv" là giảm dần còn "asc" la tăng dần
+        .sort(sort)   // .sort({ position: "desc" }) // hàm này để sắp xép vị trí position "desv" là giảm dần còn "asc" la tăng dần
         .limit(objectPagination.limitItems)
         .skip(objectPagination.skip);
-    // .limit để lấy ra đúng 4 sản phẩm ở trang đó thôi
-    // .skip là để bỏ qua các sản phẩm trước đó
-    // console.log(products);
-    //truyền re view
+    // .limit để lấy ra đúng 4 sản phẩm ở trang đó thôi  // .skip là để bỏ qua các sản phẩm trước đó
+    // console.log(products);//truyền re view 
+
     res.render("admin/pages/products/index", {
         pageTitle: "Danh sách sản phẩm",
         products: products,
@@ -56,7 +63,6 @@ module.exports.index = async (req, res) => {
         pagination: objectPagination
     });
 }
-
 // [PATCH] /admin/products/change-status/:status/:id sửa từ hoạt động sang ko hoạt động và ngược lại
 module.exports.changeStatus = async (req, res) => {
     // console.log(req.params);
@@ -114,7 +120,6 @@ module.exports.changeMulti = async (req, res) => {
     // console.log(ids);
     res.redirect("back");
 }
-
 // // [DELETE] /admin/products/delete/:id Xóa cứng
 // module.exports.daleteItem = async (req, res) => {
 //     // console.log(req.params);
@@ -135,22 +140,17 @@ module.exports.deleteItem = async (req, res) => {
     req.flash("success", `Đã xóa thành công  sản phẩm`);
     res.redirect(`back`);  // back là để cho nó dừng laị ở trang đó
 }
-
 // [GET] /admin/products/create tạo mới 1 sản phẩm
 module.exports.create = async (req, res) => {
     res.render("admin/pages/products/create.pug", {
         pageTitle: "Thêm mới sản phẩm",
     });
 }
-
 // [POST] /admin/products/create tạo mới 1 sản phẩm
 module.exports.createPost = async (req, res) => {
-
-
-
     if (req.body.title.length < 8 || req.body.length == "") {
         req.flash("error", `Tiêu đề phải lớn hơn = 8 ký tự !`);
-        res.redirect("black");
+        res.redirect("back");
         return;
     }
     // Chuyển các phầntuwf từ string về Double
@@ -164,16 +164,11 @@ module.exports.createPost = async (req, res) => {
     } else {
         req.body.position = parseInt(req.body.position);
     }
-    if (req.file) {
-        req.body.thumbnail = `/uploads/${req.file.filename}`;
-    }
-    // tâoj mới và lưusản phẩm vào database Mongodb
     const product = new Product(req.body);
     await product.save();
-    // console.log(req.body);
+    console.log(product);
     res.redirect(`${systemConfig.prefixAdmin}/products`)
 }
-
 // [GET] /admin/products/edit:id sửa 1 sản phẩm
 module.exports.edit = async (req, res) => {
     try {
@@ -192,7 +187,6 @@ module.exports.edit = async (req, res) => {
         res.redirect(`${systemConfig.prefixAdmin}/products`)
     }
 }
-
 // [PATCH] /admin/products/edit:id sửa 1 sản phẩm và lưu nó
 module.exports.editPatch = async (req, res) => {
     const id = req.params.id;
@@ -209,20 +203,14 @@ module.exports.editPatch = async (req, res) => {
     try {
         await Product.updateOne({ _id: id }, req.body);
         req.flash("success", "Cập nhật sản phẩm thành công !")
-
         // setTimeout(() => {
         //     res.redirect(`${systemConfig.prefixAdmin}/products`)
         // }, 5000)
     } catch (error) {
         req.flash("error", "Cập nhật thất bại!")
     }
-
-    // console.log(req.body);
     res.redirect("back")
 }
-
-
-
 //Detail
 // [GET] /admin/products/edit:id sửa 1 sản phẩm
 module.exports.detail = async (req, res) => {

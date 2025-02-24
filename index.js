@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 var methodOverride = require('method-override') /// import PATH PUSH ....
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -30,6 +31,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'pug');
+
+//tinyMCE
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 
 //Flash
 app.use(cookieParser("keyboard cat"));
